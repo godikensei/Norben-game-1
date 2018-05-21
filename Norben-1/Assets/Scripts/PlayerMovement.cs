@@ -13,6 +13,13 @@ public class PlayerMovement : MonoBehaviour {
     float currentSpeed;
     float velocityY;
 
+    bool grounded = false;
+    Collider[] groundCollisions;
+    float groundCheckRadius = 1f;
+    public LayerMask groundLayer;
+    public Transform groundCheck;
+    public float jumpHeight;
+
     Vector3 movement;
     Animator anim;
     Rigidbody playerRigidbody;
@@ -28,7 +35,7 @@ public class PlayerMovement : MonoBehaviour {
     // Use this for initialization
     void Awake () {
         anim = GetComponent<Animator>();
-        //playerRigidbody = GetComponent<Rigidbody>();
+        playerRigidbody = GetComponent<Rigidbody>();
         controller = GetComponent<CharacterController>();
 
         cameraT = Camera.main.transform;
@@ -58,6 +65,33 @@ public class PlayerMovement : MonoBehaviour {
         //Move(h, v);
         Animating(h, v);
         Turning(h, v);
+
+        groundCollisions = Physics.OverlapSphere(groundCheck.position, groundCheckRadius, groundLayer);
+
+        if (groundCollisions.Length > 0)
+        {
+            grounded = true;
+        }
+        else
+        {
+            grounded = false;
+        }
+
+        anim.SetBool("grounded", grounded);
+
+        Debug.Log(grounded);
+
+        if (grounded && Input.GetKeyDown(KeyCode.Space))
+        {
+            grounded = false;
+            anim.SetBool("grounded", grounded);
+            playerRigidbody.AddForce(new Vector3(0, jumpHeight, 0));
+        }
+
+    }
+
+    void isGrounded()
+    {
 
     }
 
