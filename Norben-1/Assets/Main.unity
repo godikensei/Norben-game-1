@@ -813,6 +813,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkingSpeed: 4
+  runSpeed: 10
   jumpForce: 7
   gravity: -12
   groundLayer:

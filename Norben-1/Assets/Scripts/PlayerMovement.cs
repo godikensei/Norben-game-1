@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour {
     private CharacterController controller;
 
     public float walkingSpeed = 2;
+    public float runSpeed = 6;
     public float jumpForce = 7;
     public float gravity = -12;
     float currentSpeed;
@@ -46,8 +47,11 @@ public class PlayerMovement : MonoBehaviour {
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
 
+        Vector2 input = new Vector2(h, v);
+        Vector2 inputDir = input.normalized;
 
-        if(h != 0f || v != 0f)
+
+        if (h != 0f || v != 0f)
         {
             currentSpeed = walkingSpeed;
         }
@@ -55,16 +59,17 @@ public class PlayerMovement : MonoBehaviour {
         {
             currentSpeed = 0f;
         }
+
+        bool running = Input.GetKey(KeyCode.LeftShift);
+        currentSpeed = ((running) ? runSpeed : walkingSpeed) * inputDir.magnitude;
+
         transform.Translate(transform.forward * currentSpeed * Time.deltaTime, Space.World);
-        //Vector3 velocity = transform.forward * currentSpeed;
 
-        //controller.Move(velocity * Time.deltaTime);
+        float animationSpeedPercent = ((running) ? 1f : .5f) * inputDir.magnitude;
+        anim.SetFloat("speedPercent", animationSpeedPercent);
 
-        //velocityY += Time.deltaTime * gravity;
-
-        //Move(h, v);
         Animating(h, v);
-        Turning(h, v);
+        Turning(inputDir);
 
         groundCollisions = Physics.OverlapSphere(groundCheck.position, groundCheckRadius, groundLayer);
 
@@ -77,14 +82,13 @@ public class PlayerMovement : MonoBehaviour {
             grounded = false;
         }
 
-        anim.SetBool("grounded", grounded);
 
         Debug.Log(grounded);
 
         if (grounded && Input.GetKeyDown(KeyCode.Space))
         {
             grounded = false;
-            anim.SetBool("grounded", grounded);
+            //anim.SetBool("grounded", grounded);
             playerRigidbody.AddForce(new Vector3(0, jumpHeight, 0));
         }
 
@@ -96,42 +100,10 @@ public class PlayerMovement : MonoBehaviour {
 
     }
 
-    void isGrounded()
+
+    void Turning(Vector2 inputDir)
     {
-
-    }
-
-   /* private void Jump()
-    {
-        if (controller.isGrounded)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                velocityY = jumpForce;
-            }
-
-        } else
-        {
-            velocityY -= gravity * Time.deltaTime;
-        }
-
-        Vector3 moveVector = new Vector3(0, velocityY, 0);
-        controller.Move(moveVector * Time.deltaTime);
-    }*/
-
-    void Move(float h, float v)
-    {
-        movement.Set(h, 0f, v);
-        //A h és v-t ha egyszerre nyomjuk, akkor 1.4 lesz, ezért normalizálni kell
-        movement = movement.normalized * walkingSpeed * Time.deltaTime;
-
-        playerRigidbody.MovePosition(transform.position + movement);
-    }
-
-    void Turning(float h , float v)
-    {
-        Vector2 input = new Vector2(h, v);
-        Vector2 inputDir = input.normalized;
+        
 
         if(inputDir != Vector2.zero)
         {
