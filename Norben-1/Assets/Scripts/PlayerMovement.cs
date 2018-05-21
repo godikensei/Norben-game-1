@@ -88,6 +88,12 @@ public class PlayerMovement : MonoBehaviour {
             playerRigidbody.AddForce(new Vector3(0, jumpHeight, 0));
         }
 
+        //sword
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            anim.SetTrigger("Attack");
+        }
+
     }
 
     void isGrounded()
