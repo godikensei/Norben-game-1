@@ -98,6 +98,11 @@ public class PlayerMovement : MonoBehaviour {
             anim.SetTrigger("Attack");
         }
 
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            anim.SetTrigger("swordOff");
+        }
+
     }
 
 
